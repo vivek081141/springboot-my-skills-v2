@@ -8,6 +8,7 @@ import com.myskills.demo.models.Feed;
 import com.myskills.demo.models.User;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -23,8 +24,8 @@ public class FeedConverter {
       Feed feed = new Feed();
       feed.setId(feedsEntity.getId());
       feed.setUserId(feedsEntity.getUserEntity().getId());
-      feed.setHeader(feedsEntity.getFeedDetail());
       feed.setDescription(feedsEntity.getFeedDetail());
+      feed.setHeader(feedsEntity.getFeedHeader());
       feed.setLikesCount(feedsEntity.getLikes());
       feed.setPostedDate(DateConverter.getStringFromDate(feedsEntity.getPostedOn()));
       feed.setUser(convertUserEntityToModel(feedsEntity.getUserEntity()));
@@ -45,6 +46,12 @@ public class FeedConverter {
         comment.setCommentedOn(DateConverter.getStringFromDate(entity.getPostedDate()));
         comment.setFeedId(entity.getFeedsEntity().getId());
         comments.add(comment);
+
+        Collections.sort(comments, (o1, o2) -> {
+          return DateConverter.getDateFromString(o1.getCommentedOn())
+                  .compareTo(DateConverter.getDateFromString(o2.getCommentedOn()));
+        });
+
       });
     }
     return comments;

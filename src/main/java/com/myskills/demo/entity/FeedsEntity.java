@@ -29,6 +29,9 @@ public class FeedsEntity {
   @Column(name = "FEED_DETAIL")
   private String feedDetail;
 
+  @Column(name = "FEED_HEADER")
+  private String feedHeader;
+
   @Column (name = "POSTED_ON")
   private Date postedOn;
 
