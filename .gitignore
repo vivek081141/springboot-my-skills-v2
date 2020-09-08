@@ -1,6 +1,6 @@
 HELP.md
 target/
-!.mvn/wrapper/maven-wrapper.jar
+
 !**/src/main/**
 !**/src/test/**
 
@@ -26,6 +26,7 @@ target/
 /nbdist/
 /.nb-gradle/
 build/
+*/wrapper/maven-wrapper.jar
 
 ### VS Code ###
 .vscode/
