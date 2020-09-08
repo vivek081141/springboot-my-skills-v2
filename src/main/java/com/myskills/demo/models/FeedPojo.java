@@ -4,7 +4,7 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class Like {
+public class FeedPojo {
   @NotNull(message = "Feed id can not be empty")
   private Long feedId;
 }

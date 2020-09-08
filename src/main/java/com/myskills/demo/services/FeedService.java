@@ -1,6 +1,7 @@
 package com.myskills.demo.services;
 
 
+import com.myskills.demo.converters.DateConverter;
 import com.myskills.demo.converters.FeedConverter;
 import com.myskills.demo.entity.CommentsEntity;
 import com.myskills.demo.entity.FeedsEntity;
@@ -14,8 +15,10 @@ import com.myskills.demo.repository.RelationshipRepository;
 import com.myskills.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -44,10 +47,15 @@ public class FeedService implements IFeedService {
     List<Feed> feedList = new ArrayList<>();
     Optional<UserEntity> userOptional = userRepository.findById(userId);
     userOptional.ifPresent(userEntity -> {
-      feedList.addAll(feedConverter.convertFeedEntityToFeed(userEntity.getId(), userEntity.getFeedsEntityList()));
+      if (userEntity.getFeedsEntityList() != null && !userEntity.getFeedsEntityList().isEmpty()){
+        feedList.addAll(feedConverter.convertFeedEntityToFeed(userEntity.getId(), userEntity.getFeedsEntityList()));
+        Collections.sort(feedList, (o1, o2) -> {
+          return DateConverter.getDateFromString(o2.getPostedDate())
+                  .compareTo(DateConverter.getDateFromString(o1.getPostedDate()));
+        });
+      }
     });
     return feedList;
-
   }
 
   //GET PERSON from Relationship,
@@ -114,6 +122,19 @@ public class FeedService implements IFeedService {
     feedOptional.ifPresent(feedsEntity -> {
       feedsEntity.setLikes(feedsEntity.getLikes() + 1);
       feedRepository.save(feedsEntity);
+    });
+  }
+
+  @Override
+  @Transactional
+  public void deleteFeed(Long feedId) {
+    Optional<FeedsEntity> feedOptional = feedRepository.findById(feedId);
+    feedOptional.ifPresent(feedsEntity -> {
+      List<CommentsEntity> commentsEntities = feedsEntity.getCommentsList();
+      if(commentsEntities != null && !commentsEntities.isEmpty()){
+        commentsEntities.forEach(commentsEntity -> commentsRepository.delete(commentsEntity));
+      }
+      feedRepository.delete(feedsEntity);
     });
   }
 

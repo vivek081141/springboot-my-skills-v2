@@ -2,7 +2,7 @@ package com.myskills.demo.controller;
 
 import com.myskills.demo.models.Feed;
 import com.myskills.demo.models.Comment;
-import com.myskills.demo.models.Like;
+import com.myskills.demo.models.FeedPojo;
 import com.myskills.demo.services.IFeedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -18,7 +18,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/feeds")
-//@CrossOrigin(origins = "http://localhost:4200/", maxAge = 3600)
 public class FeedController {
 
   @Autowired
@@ -40,6 +39,7 @@ public class FeedController {
     return feedService.getFeeds(userId);
   }
 
+  /** post a new feed **/
   @RequestMapping(value = "/postFeed", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
   public ResponseEntity postFeed(@RequestBody @Validated Feed feed) {
@@ -47,6 +47,7 @@ public class FeedController {
     return ResponseEntity.ok().body(feedList);
   }
 
+  /** post a new comment for a feed **/
   @RequestMapping(value = "/postComment", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
   public ResponseEntity postComment(@RequestBody @Validated Comment comment) {
@@ -54,15 +55,24 @@ public class FeedController {
     return ResponseEntity.ok().body(commentList);
   }
 
+  /** like a feed **/
   @RequestMapping(value = "/like", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,
           produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
-  public ResponseEntity like(@RequestBody Like like) {
+  public ResponseEntity like(@RequestBody FeedPojo like) {
     feedService.likeFeed(Long.valueOf(like.getFeedId()));
     //ResponseEntity.accepted().headers(headers).body(c);
     return ResponseEntity.ok().build();
   }
 
+  /** delete a feed **/
+  @RequestMapping(value = "/delete", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseBody
+  public ResponseEntity deleteFeed(@RequestBody FeedPojo like) {
+    feedService.deleteFeed(Long.valueOf(like.getFeedId()));
+    return ResponseEntity.ok().build();
+  }
 }
 
 

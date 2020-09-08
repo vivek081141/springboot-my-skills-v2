@@ -15,4 +15,6 @@ public interface IFeedService {
   public List<Comment> postComment(Comment comment);
 
   public void likeFeed(Long feedId);
+
+  void deleteFeed(Long feedId);
 }
